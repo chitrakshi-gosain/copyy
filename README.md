@@ -4,14 +4,14 @@ NOTE: The submission instructions can be found [here](https://link-here)
 
 ## Objective
 
-Your task is to build a RESTful API in Python that can take user input and attempt to match it against a predefined list of items. The API should return the best match along with a similarity score.
+Your task is to build a **RESTful API** in `Python` that can take user input and attempt to match it against a predefined list of items. The API should return the best match along with a similarity score.
 
 ## Requirements
 
-1. **API Framework**: Use Flask or FastAPI to create the API.
+1. **API Framework**: Use `Flask` or `FastAPI` to create the API.
 2. **Input**:
-    - The API should accept a POST request to an endpoint.
-    - The request body should contain a JSON object with the following structure:
+    - The API should accept a `POST` request to an endpoint.
+    - The request body should contain a `JSON object` with the following structure:
 
 ### Example input
 
@@ -23,13 +23,13 @@ Your task is to build a RESTful API in Python that can take user input and attem
 ```
 
 1. **Data**:
-    - The API should have a predefined list of strings to match against. You can hardcode this list from the items.json file provided.
-    - You can find a list of example inputs from the inputs.json file provided.
+    - The API should have a predefined list of strings to match against. You can hardcode this list from the `items.json` file provided.
+    - You can find a list of example inputs from the `inputs.json` file provided.
 2. **Matching Logic**:
     - Implement a simple matching algorithm to find the closest match from the items list.
-    - Create a similarity score based on how many fields matched, and how close they matched. You can consider the weighting of each field, i.e. a match on "trade" field might hold more weight than a match on "unit of measure" field.
-    - Return the best match and the similarity score as a JSON response.
-    - Note: it is not necessary to optimise the matching algorithm. We’re less concerned about the accuracy and preciseness of the match/similarity score, and more concerned about how the code is structured and how the requirements are considered.
+    - Create a similarity score based on how many fields matched, and how close they matched. You can consider the weighting of each field, i.e. a match on **trade** field might hold more weight than a match on **unit of measure** field.
+    - Return the best match and the similarity score as a `JSON response`.
+    - Note: it is not necessary to optimise the matching algorithm. We’re less concerned about the accuracy and preciseness of the match / similarity score, and more concerned about how the code is structured and how the requirements are considered.
 
 ### Example input 1
 
