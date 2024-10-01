@@ -1,7 +1,7 @@
 import json
 from typing import List, Optional
 from difflib import SequenceMatcher
-from models import Item, MatchRequest
+from .models import Item, MatchRequest
 
 class Matcher:
     def __init__(self):
@@ -21,7 +21,7 @@ class Matcher:
     def calculate_similarity(self, input_str: str, target_str: str) -> float:
         return SequenceMatcher(None, input_str.lower(), target_str.lower()).ratio()
 
-    def find_best_match(self, data: MatchRequest) -> Optional[dict]:
+    def find_best_match(self, data: MatchRequest) -> dict:
         best_match = None
         highest_score = 0
 
@@ -36,4 +36,7 @@ class Matcher:
                 highest_score = similarity_score
                 best_match = item
 
-        return best_match, highest_score
+        return {
+            "best_match": best_match,
+            "highest_score": highest_score
+        }

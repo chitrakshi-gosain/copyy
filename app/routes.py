@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
-from models import MatchRequest, LoadRequest
-from services import Matcher
+from .models import MatchRequest, LoadRequest
+from .services import Matcher
 
 # Initialize FastAPI router
 router = APIRouter()
@@ -17,7 +17,7 @@ def match_item(data: MatchRequest):
     if not data.trade or not data.unit_of_measure:
         raise HTTPException(status_code=400, detail="Invalid input, trade and unit_of_measure must be provided.")
     
-    best_match, score = matcher.find_best_match(data)
+    best_match, score = matcher.find_best_match(data).values()
 
     if best_match is None or score < 0.5:
         raise HTTPException(status_code=404, detail="No matching item found.")
