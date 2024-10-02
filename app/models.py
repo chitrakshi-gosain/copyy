@@ -3,35 +3,45 @@
 """
 
 from typing import List
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+from uuid import uuid4
 
 # Request model for matching items
 class MatchRequest(BaseModel):
-    """_summary_
+    """
+    Data model representing a request for matching items.
 
-    Args:
-        BaseModel (_type_): _description_
+    Attributes:
+        trade (str): The trade type of the item.
+        unit_of_measure (str): The unit of measurement associated with the item.
     """
     trade: str
     unit_of_measure: str
 
 # Model for individual items
 class Item(BaseModel):
-    """_summary_
-
-    Args:
-        BaseModel (_type_): _description_
     """
+    Data model representing an individual item.
+
+    Attributes:
+        id (str): The unique identifier of the item.
+        trade (str): The trade type of the item.
+        unit_of_measure (str): The unit of measurement associated with the item.
+        rate (float): The rate associated with the item.
+    """
+    id: str = Field(default_factory=lambda: str(uuid4()))  # Auto-generate unique id if not provided
     trade: str
     unit_of_measure: str
     rate: float
 
 # Request model for loading new items
 class LoadRequest(BaseModel):
-    """_summary_
+    """
+    Data model representing a request to load new items into the system.
 
-    Args:
-        BaseModel (_type_): _description_
+    Attributes:
+        items (List[Item]): A list of items to be loaded.
+        replace (bool): If True, replaces the existing items; otherwise appends the new items. Defaults to True.
     """
     items: List[Item]
     replace: bool = True  # If true, replace the current items; otherwise append

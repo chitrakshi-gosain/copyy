@@ -7,10 +7,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from .routes import router
 
 def create_app() -> FastAPI:
-    """_summary_
+    """
+    Create and configure the FastAPI application.
 
     Returns:
-        FastAPI: _description_
+        FastAPI: The configured FastAPI application instance.
     """
     fast_api_app = FastAPI(
         title="Quotecheck Code Challenge",
