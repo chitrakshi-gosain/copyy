@@ -11,6 +11,9 @@ any packages in requirements.txt
 **functions doc
 module doc**
 
+`uvicorn app.main:app --reload`
+`pytest`
+
 integrate a swagger file?
 
 ```graphql

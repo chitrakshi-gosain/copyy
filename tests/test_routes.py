@@ -1,9 +1,15 @@
+"""
+@author Chitrakshi Gosain
+"""
+
 from fastapi.testclient import TestClient
 from app.main import app
 
 client = TestClient(app)
 
-def test_exact_match():
+def test_exact_match() -> None:
+    """_summary_
+    """
     response = client.post("/match", json={"trade": "painting", "unit_of_measure": "m2"})
     assert response.status_code == 200
     data = response.json()
@@ -12,7 +18,9 @@ def test_exact_match():
     assert data["best_match"]["rate"] == 23.0
     assert data["similarity_score"] == 1.0
 
-def test_partial_match():
+def test_partial_match() -> None:
+    """_summary_
+    """
     response = client.post("/match", json={"trade": "plumbing", "unit_of_measure": "item"})
     assert response.status_code == 200
     data = response.json()
@@ -21,12 +29,16 @@ def test_partial_match():
     assert data["best_match"]["rate"] == 150.0
     assert data["similarity_score"] > 0.5
 
-def test_no_match():
+def test_no_match() -> None:
+    """_summary_
+    """
     response = client.post("/match", json={"trade": "random", "unit_of_measure": "whatnot"})
     assert response.status_code == 404
     assert response.json() == {"detail": "No matching item found."}
 
-def test_load_items():
+def test_load_items() -> None:
+    """_summary_
+    """
     new_items = {
         "items": [
             {
@@ -42,10 +54,10 @@ def test_load_items():
         ],
         "replace": True
     }
-    
+
     load_response = client.post("/load", json=new_items)
     assert load_response.status_code == 200
-    assert load_response.json() == None
+    assert load_response.json() is None
 
     # Test that the new items are available
     match_response = client.post("/match", json={"trade": "carpentry", "unit_of_measure": "hour"})
