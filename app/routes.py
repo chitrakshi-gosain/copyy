@@ -22,7 +22,7 @@ def load_items(data: LoadRequest) -> None:
     matcher.load_new_items(data.items, replace=data.replace)
 
 @router.post("/match")
-def match_item(data: MatchRequest) -> dict[str, str | int]:
+def match_item(data: MatchRequest) -> dict[str, dict[str, str | float] | float]:
     """_summary_
 
     Args:

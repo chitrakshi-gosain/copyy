@@ -33,9 +33,9 @@ class Matcher:
             replace (bool, optional): _description_. Defaults to True.
         """
         if replace:
-            self.items = [item.dict() for item in new_items]
+            self.items = [item.model_dump() for item in new_items]
         else:
-            self.items.extend([item.dict() for item in new_items])
+            self.items.extend([item.model_dump() for item in new_items])
 
     def calculate_similarity(self, input_str: str, target_str: str) -> float:
         """_summary_
