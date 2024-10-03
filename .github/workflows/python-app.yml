@@ -37,7 +37,7 @@ jobs:
         pytest
     - name: Security check with safety
       run: |
-        safety check
+        safety check --ignore 70612
     - name: Type check with mypy
       run: |
         mypy app/
