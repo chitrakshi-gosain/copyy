@@ -1,5 +1,7 @@
 """
+@purpose QuoteCheck Code Challenge
 @author Chitrakshi Gosain
+@date Last Edited - Sep 20, 2024
 """
 
 import random
