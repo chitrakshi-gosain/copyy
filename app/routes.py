@@ -17,6 +17,7 @@ router = APIRouter()
 # Instantiate the Matcher service
 matcher = Matcher()
 
+
 @router.post("/load")
 def load_items(data: LoadRequest) -> None:
     """
@@ -31,13 +32,19 @@ def load_items(data: LoadRequest) -> None:
         ValueError: If any item in the input does not have the required data types for 'trade', 'unit_of_measure', or 'rate'.
     """
     try:
-        matcher.load_new_items(matcher.create_items_from_json(data.items), replace=data.replace)
+        matcher.load_new_items(
+            matcher.create_items_from_json(data.items), replace=data.replace
+        )
     except ValueError as v:
         raise HTTPException(
-            status_code=400, detail=f"Incorrect data type for 'trade', 'unit_of_measure', or 'rate': {str(v)}"
+            status_code=400,
+            detail=f"Incorrect data type for 'trade', 'unit_of_measure', or 'rate': {str(v)}",
         ) from v
     except Exception as e:
-        raise HTTPException(status_code=500, detail="Failed to load items due to poor structure") from e
+        raise HTTPException(
+            status_code=500, detail="Failed to load items due to poor structure"
+        ) from e
+
 
 @router.post("/match")
 def match_item(data: MatchRequest) -> dict[str, Item | float]:
@@ -56,17 +63,18 @@ def match_item(data: MatchRequest) -> dict[str, Item | float]:
                                     (rounded off to 2 decimal points).
     """
     if not data.trade or not data.unit_of_measure:
-        raise HTTPException(status_code=400, detail="Invalid input, trade and unit_of_measure must be provided.")
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid input, trade and unit_of_measure must be provided.",
+        )
 
     best_match, score = matcher.find_best_match(data).values()
 
     if best_match is None or score < 0.5:
         raise HTTPException(status_code=404, detail="No matching item found.")
 
-    return {
-        "best_match": best_match,
-        "similarity_score": round(score, ndigits=2)
-    }
+    return {"best_match": best_match, "similarity_score": round(score, ndigits=2)}
+
 
 @router.get("/get_items")
 def get_items() -> List[Item]:
@@ -82,7 +90,10 @@ def get_items() -> List[Item]:
     try:
         return matcher.get_all_items()
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to retrieve items: {str(e)}") from e
+        raise HTTPException(
+            status_code=500, detail=f"Failed to retrieve items: {str(e)}"
+        ) from e
+
 
 @router.get("/show_similarity_of_random_input")
 def show_similarity_of_random_input() -> dict:
@@ -101,11 +112,15 @@ def show_similarity_of_random_input() -> dict:
             inputs = json.load(file)["example_inputs"]
 
         if not inputs:
-            raise HTTPException(status_code=404, detail="No inputs found in 'app/data/inputs.json'.")
+            raise HTTPException(
+                status_code=404, detail="No inputs found in 'app/data/inputs.json'."
+            )
 
         # Randomly select an input
         random_input = random.choice(inputs)
-        match_request = MatchRequest(trade=random_input["trade"], unit_of_measure=random_input["unit_of_measure"])
+        match_request = MatchRequest(
+            trade=random_input["trade"], unit_of_measure=random_input["unit_of_measure"]
+        )
 
         # Match the random input and get the similarity score
         result = match_item(match_request)
@@ -113,13 +128,19 @@ def show_similarity_of_random_input() -> dict:
         return {
             "random_input": random_input,
             "best_match": result["best_match"],
-            "similarity_score": result["similarity_score"]
+            "similarity_score": result["similarity_score"],
         }
 
     except FileNotFoundError as f:
-        raise HTTPException(status_code=500, detail="'app/data/inputs.json' not found.") from f
+        raise HTTPException(
+            status_code=500, detail="'app/data/inputs.json' not found."
+        ) from f
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to show similarity for random input: {str(e)}") from e
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to show similarity for random input: {str(e)}",
+        ) from e
+
 
 @router.delete("/clear")
 def clear_items() -> str:
@@ -137,4 +158,6 @@ def clear_items() -> str:
 
         return "Squeaky Clean!"
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to clear items: {str(e)}") from e
+        raise HTTPException(
+            status_code=500, detail=f"Failed to clear items: {str(e)}"
+        ) from e

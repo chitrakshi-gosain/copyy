@@ -8,6 +8,7 @@ from uuid import uuid4
 from typing import List
 from pydantic import BaseModel, Field
 
+
 class MatchRequest(BaseModel):
     """
     Data model representing a request for matching items.
@@ -18,6 +19,7 @@ class MatchRequest(BaseModel):
     """
     trade: str
     unit_of_measure: str
+
 
 class Item(BaseModel):
     """
@@ -33,6 +35,7 @@ class Item(BaseModel):
     trade: str
     unit_of_measure: str
     rate: float
+
 
 class LoadRequest(BaseModel):
     """

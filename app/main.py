@@ -7,6 +7,7 @@
 from fastapi import FastAPI
 from .routes import router
 
+
 def create_app() -> FastAPI:
     """
     Create and configure the FastAPI application.
@@ -23,6 +24,7 @@ def create_app() -> FastAPI:
     fast_api_app.include_router(router)
 
     return fast_api_app
+
 
 # Create the FastAPI application instance
 app = create_app()

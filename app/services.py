@@ -9,6 +9,7 @@ from typing import List
 from difflib import SequenceMatcher
 from .models import Item, MatchRequest
 
+
 class Matcher:
     """
     Service class responsible for matching items and loading new items.
@@ -16,6 +17,7 @@ class Matcher:
     Attributes:
         items (List[Item]): A list of items loaded in the system, either from default data, newly provided data or a mix of both.
     """
+
     def __init__(self) -> None:
         """
         Initialize the Matcher class and load default items from "app/data/items.json" into the system.
@@ -28,7 +30,9 @@ class Matcher:
         with open(file="app/data/items.json", mode="r", encoding="utf-8") as file:
             self.load_new_items(self.create_items_from_json(json.load(file)))
 
-    def create_items_from_json(self, json_input: List[dict[str, str | float]]) -> List[Item]:
+    def create_items_from_json(
+        self, json_input: List[dict[str, str | float]]
+    ) -> List[Item]:
         """
         Create a list of Item instances from the provided JSON input.
 
@@ -41,8 +45,18 @@ class Matcher:
         """
         items = []
         for item in json_input:
-            if isinstance(item["trade"], str) and isinstance(item["unit_of_measure"], str) and isinstance(item["rate"], float):
-                items.append(Item(trade=item["trade"], unit_of_measure=item["unit_of_measure"], rate=item["rate"]))
+            if (
+                isinstance(item["trade"], str)
+                and isinstance(item["unit_of_measure"], str)
+                and isinstance(item["rate"], float)
+            ):
+                items.append(
+                    Item(
+                        trade=item["trade"],
+                        unit_of_measure=item["unit_of_measure"],
+                        rate=item["rate"],
+                    )
+                )
 
         return items
 
@@ -102,7 +116,9 @@ class Matcher:
 
         for item in self.items:
             trade_similarity = self.calculate_similarity(data.trade, item.trade)
-            uom_similarity = self.calculate_similarity(data.unit_of_measure, item.unit_of_measure)
+            uom_similarity = self.calculate_similarity(
+                data.unit_of_measure, item.unit_of_measure
+            )
 
             # Weighted score
             similarity_score = (trade_similarity * 0.7) + (uom_similarity * 0.3)
@@ -111,7 +127,4 @@ class Matcher:
                 highest_score = similarity_score
                 best_match = item
 
-        return {
-            "best_match": best_match,
-            "highest_score": highest_score
-        }
+        return {"best_match": best_match, "highest_score": highest_score}
