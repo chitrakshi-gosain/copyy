@@ -5,49 +5,46 @@
 """
 
 import json
-from typing import List, Any
+from typing import List
 from difflib import SequenceMatcher
 from .models import Item, MatchRequest
-from uuid import uuid4
 
 class Matcher:
     """
     Service class responsible for matching items and loading new items.
 
     Attributes:
-        items (List[dict]): A list of items loaded into the system, either from default data or newly provided data.
+        items (List[Item]): A list of items loaded in the system, either from default data, newly provided data or a mix of both.
     """
     def __init__(self) -> None:
         """
-        Initialize the Matcher class and load default items into the system.
-        """
-        # Load default items from static data
-        self.items = self.load_default_items()
+        Initialize the Matcher class and load default items from "app/data/items.json" into the system.
 
-    def load_default_items(self) -> List[dict]:
+        This method reads the JSON file containing item data and populates the items list with Item instances
+        created from the JSON data.
         """
-        Load default items from a JSON file.
+        self.items = []
 
-        Returns:
-            List[dict]: A list of default items.
-        """
-        with open(file='app/data/items.json', mode='r', encoding='utf-8') as f:
-            return json.load(f)
+        with open(file='app/data/items.json', mode='r', encoding='utf-8') as file:
+            self.load_new_items(self.create_items_from_json(json.load(file)))
 
-    def add_item_id(self, item: Item) -> dict:
+    def create_items_from_json(self, json_input: List[dict[str, str | float]]) -> List[Item]:
         """
-        Ensure that each item has a unique ID. If an ID is not provided, it will be generated.
+        Create a list of Item instances from the provided JSON input.
 
         Args:
-            item (Item): The item to process.
+            input (List[dict[str, str | float]]): A list of dictionaries, each representing an item with 
+                                                    'trade', 'unit_of_measure', and 'rate' keys.
 
         Returns:
-            dict: The item with an assigned ID.
+            List[Item]: A list of Item instances created from the input data.
         """
-        # If the item does not already have an ID, generate one
-        if not item.id:
-            item.id = str(uuid4())
-        return item.model_dump()
+        items = []
+        for item in json_input:
+            if isinstance(item["trade"], str) and isinstance(item["unit_of_measure"], str) and isinstance(item["rate"], float):
+                items.append(Item(trade=item["trade"], unit_of_measure=item["unit_of_measure"], rate=item["rate"]))
+
+        return items
 
     def load_new_items(self, new_items: List[Item], replace: bool = True) -> None:
         """
@@ -58,9 +55,9 @@ class Matcher:
             replace (bool, optional): If True, replaces the current items; if False, appends the new items. Defaults to True.
         """
         if replace:
-            self.items = [self.add_item_id(item) for item in new_items]
+            self.items = list(new_items)
         else:
-            self.items.extend([self.add_item_id(item) for item in new_items])
+            self.items.extend(list(new_items))
 
     def clear_items(self) -> None:
         """
@@ -68,12 +65,12 @@ class Matcher:
         """
         self.items.clear()
 
-    def get_all_items(self) -> List[dict[str, Any]]:
+    def get_all_items(self) -> List[Item]:
         """
         Get all items currently stored in the matcher.
 
         Returns:
-            List[dict[str, Any]]: List of all items.
+            List[Item]: List of all items.
         """
         return self.items
 
@@ -104,8 +101,8 @@ class Matcher:
         highest_score = 0
 
         for item in self.items:
-            trade_similarity = self.calculate_similarity(data.trade, item["trade"])
-            uom_similarity = self.calculate_similarity(data.unit_of_measure, item["unit_of_measure"])
+            trade_similarity = self.calculate_similarity(data.trade, item.trade)
+            uom_similarity = self.calculate_similarity(data.unit_of_measure, item.unit_of_measure)
 
             # Weighted score
             similarity_score = (trade_similarity * 0.7) + (uom_similarity * 0.3)
