@@ -7,14 +7,13 @@
 from fastapi.testclient import TestClient
 from app.main import app
 
-
 client = TestClient(app)
 
 def test_exact_match() -> None:
     """
     Test for exact matching of trade and unit of measure.
 
-    This test checks if the API returns the correct item when both the trade and 
+    This test checks if the API returns the correct item when both the trade and
     unit of measure match exactly with an existing item.
 
     Asserts:
@@ -34,7 +33,7 @@ def test_partial_match() -> None:
     """
     Test for partial matching of trade and unit of measure.
 
-    This test verifies that the API returns a match when there is only a partial 
+    This test verifies that the API returns a match when there is only a partial
     similarity between the input and an existing item (similarity score > 0.5).
 
     Asserts:
@@ -103,3 +102,5 @@ def test_load_items() -> None:
     assert match_response.status_code == 200
     assert match_response.json()["best_match"]["trade"] == "Carpentry"
     assert match_response.json()["similarity_score"] > 0.9
+
+# load items with replace as False check if the length increaases

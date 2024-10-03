@@ -23,9 +23,9 @@ class Matcher:
         This method reads the JSON file containing item data and populates the items list with Item instances
         created from the JSON data.
         """
-        self.items = []
+        self.items: list[Item] = []
 
-        with open(file='app/data/items.json', mode='r', encoding='utf-8') as file:
+        with open(file="app/data/items.json", mode="r", encoding="utf-8") as file:
             self.load_new_items(self.create_items_from_json(json.load(file)))
 
     def create_items_from_json(self, json_input: List[dict[str, str | float]]) -> List[Item]:
@@ -33,7 +33,7 @@ class Matcher:
         Create a list of Item instances from the provided JSON input.
 
         Args:
-            input (List[dict[str, str | float]]): A list of dictionaries, each representing an item with 
+            input (List[dict[str, str | float]]): A list of dictionaries, each representing an item with
                                                     'trade', 'unit_of_measure', and 'rate' keys.
 
         Returns:
@@ -98,7 +98,7 @@ class Matcher:
             dict: A dictionary containing the best matching item and its highest similarity score.
         """
         best_match = None
-        highest_score = 0
+        highest_score = 0.0
 
         for item in self.items:
             trade_similarity = self.calculate_similarity(data.trade, item.trade)
@@ -109,7 +109,7 @@ class Matcher:
 
             if item and similarity_score > highest_score:
                 highest_score = similarity_score
-                best_match =  item
+                best_match = item
 
         return {
             "best_match": best_match,

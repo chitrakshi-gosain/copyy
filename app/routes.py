@@ -33,7 +33,9 @@ def load_items(data: LoadRequest) -> None:
     try:
         matcher.load_new_items(matcher.create_items_from_json(data.items), replace=data.replace)
     except ValueError as v:
-        raise HTTPException(status_code=400, detail=f"Incorrect data type for 'trade', 'unit_of_measure', or 'rate': {str(v)}") from v
+        raise HTTPException(
+            status_code=400, detail=f"Incorrect data type for 'trade', 'unit_of_measure', or 'rate': {str(v)}"
+        ) from v
     except Exception as e:
         raise HTTPException(status_code=500, detail="Failed to load items due to poor structure") from e
 
@@ -50,7 +52,7 @@ def match_item(data: MatchRequest) -> dict[str, Item | float]:
         HTTPException: If no matching item is found with a similarity score greater than 0.5.
 
     Returns:
-        dict[str, Item | float]: A dictionary containing the best matching item and its similarity score 
+        dict[str, Item | float]: A dictionary containing the best matching item and its similarity score
                                     (rounded off to 2 decimal points).
     """
     if not data.trade or not data.unit_of_measure:
@@ -95,15 +97,15 @@ def show_similarity_of_random_input() -> dict:
         - chosen random input contains a 'trade' and 'unit_of_measure'
     """
     try:
-        with open(file="app/data/inputs.json", mode='r', encoding='utf-8') as file:
-            inputs = json.load(file)['example_inputs']
+        with open(file="app/data/inputs.json", mode="r", encoding="utf-8") as file:
+            inputs = json.load(file)["example_inputs"]
 
         if not inputs:
             raise HTTPException(status_code=404, detail="No inputs found in 'app/data/inputs.json'.")
 
         # Randomly select an input
         random_input = random.choice(inputs)
-        match_request = MatchRequest(trade=random_input['trade'], unit_of_measure=random_input['unit_of_measure'])
+        match_request = MatchRequest(trade=random_input["trade"], unit_of_measure=random_input["unit_of_measure"])
 
         # Match the random input and get the similarity score
         result = match_item(match_request)
@@ -133,6 +135,6 @@ def clear_items() -> str:
     try:
         matcher.clear_items()
 
-        return 'Squeaky Clean!'
+        return "Squeaky Clean!"
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to clear items: {str(e)}") from e
