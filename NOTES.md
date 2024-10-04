@@ -34,3 +34,9 @@ integrate a swagger file?
 ├── requirements.txt         # Required dependencies
 └── README.md                # Instructions
 ```
+
+my email should say:
+sep 20 did the exercise
+sep 21 was bored added frontend for fun
+sep 24 emailed + added the github pipelines -- however pushed them just before sharing the repo
+didnt reply because was tutoring wed-fri and have ielts on saturday so been busy studying

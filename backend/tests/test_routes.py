@@ -19,6 +19,7 @@ def clear_items() -> None:
 
 def test_exact_match() -> None:
     """Test for exact matching of trade and unit of measure."""
+    # Check that obtained best match is an exact match
     response = client.post(
         url="/match/item",
         json={
@@ -36,6 +37,7 @@ def test_exact_match() -> None:
 
 def test_partial_match() -> None:
     """Test for partial matching of trade and unit of measure."""
+    # Check that obtained best match is a partial match
     response = client.post(
         url="/match/item",
         json={
@@ -53,6 +55,7 @@ def test_partial_match() -> None:
 
 def test_no_match() -> None:
     """Test for no match found in the system."""
+    # Check that obtained best match is not a match
     response = client.post(
         url="/match/item",
         json={
@@ -66,7 +69,19 @@ def test_no_match() -> None:
 
 def test_load_default_items():
     """Test loading default items."""
+    # Clear all data
+    client.delete(url="/clear")
+
+    # Check that no items exist in the system
+    response = client.get(url="/item")
+    assert response.status_code == 200
+
     # Check if default items are loaded
+    response = client.post(url="/load")
+    assert response.status_code == 200
+    assert response.json() == "Successfully autopopulated the system"
+
+    # Check the auto-population was successfull
     response = client.get(url="/item")
     assert response.status_code == 200
     assert len(response.json()) > 0  # Should return some default items
@@ -74,6 +89,7 @@ def test_load_default_items():
 
 def test_load_items_from_scratch() -> None:
     """Test for loading new items into the system."""
+    # Check if new items are loaded in the system
     new_items = {
         "items": [
             {
@@ -89,12 +105,16 @@ def test_load_items_from_scratch() -> None:
         ],
         "replace": True,
     }
-
     load_response = client.post(url="/item", json=new_items)
     assert load_response.status_code == 200
     assert load_response.json() == "Successfully loaded items"
 
-    # Test that the new items are available
+    # Check that the above 2 are the only items that exist
+    items = client.get(url="/item")
+    assert items.status_code == 200
+    assert len(items.json()) == 2
+
+    # Check that the new items are accessible and matchable
     match_response = client.post(
         url="/match/item",
         json={
@@ -109,9 +129,11 @@ def test_load_items_from_scratch() -> None:
 
 def test_load_additional_items() -> None:
     """Test for loading additional items into the system."""
+    # Check that some items exist in the system
     current_items = client.get(url="/item")
     assert current_items.status_code == 200
 
+    # Check if new items are loaded in the system
     new_items = {
         "items": [
             {
@@ -127,20 +149,19 @@ def test_load_additional_items() -> None:
         ],
         "replace": False,
     }
-
     load_response = client.post(url="/item", json=new_items)
     assert load_response.status_code == 200
     assert load_response.json() == "Successfully loaded items"
 
-    # Test that the additional items were added
+    # Check that the additional items were added in additon to existing items
     updated_items = client.get(url="/item")
     assert updated_items.status_code == 200
-
     assert len(updated_items.json()) - len(current_items.json()) == 2
 
 
 def test_clear_items():
     """Test clearing all items."""
+    # Clear the conetnts of the system
     response = client.delete("/clear")
     assert response.status_code == 200
     assert response.json() == "Squeaky Clean!"
@@ -153,5 +174,6 @@ def test_clear_items():
 
 def test_show_similarity_of_random_input():
     """Test showing similarity for a random input."""
+    # Check if the call was executed and some response was obtained
     response = client.get(url="/match/random")
-    assert response.status_code == 200 or 500
+    assert response.status_code == 200 or 400

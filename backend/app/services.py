@@ -20,19 +20,12 @@ class Matcher:
 
     def __init__(self) -> None:
         """
-        Initialize the Matcher class and load default items from "app/data/items.json" into the system.
-
-        This method reads the JSON file containing item data and populates the items list with Item instances
-        created from the JSON data.
+        Initialize the Matcher class and load default items into the system.
         """
-        self.items: list[Item] = []
+        self.items: List[Item] = []
+        self.load_default_items()
 
-        with open(file="app/data/items.json", mode="r", encoding="utf-8") as file:
-            self.load_new_items(self.create_items_from_json(json.load(file)))
-
-    def create_items_from_json(
-        self, json_input: List[dict[str, str | float]]
-    ) -> List[Item]:
+    def create_items_from_json(self, json_input: List[dict[str, str | float]]) -> List[Item]:
         """
         Create a list of Item instances from the provided JSON input.
 
@@ -45,11 +38,7 @@ class Matcher:
         """
         items = []
         for item in json_input:
-            if (
-                isinstance(item["trade"], str)
-                and isinstance(item["unit_of_measure"], str)
-                and isinstance(item["rate"], float)
-            ):
+            if isinstance(item["trade"], str) and isinstance(item["unit_of_measure"], str) and isinstance(item["rate"], float):
                 items.append(
                     Item(
                         trade=item["trade"],
@@ -59,6 +48,16 @@ class Matcher:
                 )
 
         return items
+
+    def load_default_items(self) -> None:
+        """
+        Load default items from a specified JSON file.
+
+        Returns:
+            List[dict]: A list of default items.
+        """
+        with open(file="app/data/items.json", mode="r", encoding="utf-8") as file:
+            self.load_new_items(self.create_items_from_json(json.load(file)))
 
     def load_new_items(self, new_items: List[Item], replace: bool = True) -> None:
         """

@@ -18,6 +18,27 @@ router = APIRouter()
 matcher = Matcher()
 
 
+@router.post("/load")
+def auto_populate() -> str:
+    """
+    Endpoint to load static data into the system.
+
+    Raises:
+        HTTPException: If there is an internal server error
+        
+    Returns:
+        str: A message to show the state of the system has been reset successfully.
+    """
+    try:
+        matcher.load_default_items()
+        return "Successfully autopopulated the system"
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, 
+            detail="Something went wrong"
+        ) from e
+
+
 @router.post("/item")
 def load_items(data: LoadRequest) -> str:
     """
@@ -29,19 +50,14 @@ def load_items(data: LoadRequest) -> str:
                                 is instantiated.
 
     Raises:
-        ValueError: If any item in the input does not have the required data types for 'trade', 'unit_of_measure', or 'rate'.
-    
+        HTTPException: If the JSON input had poor structure
+
     Returns:
         str: A message to show the state of the system has been reset successfully.
     """
     try:
         matcher.load_new_items(matcher.create_items_from_json(data.items), replace=data.replace)
         return "Successfully loaded items"
-    except ValueError as v:
-        raise HTTPException(
-            status_code=400,
-            detail=f"Incorrect data type for 'trade', 'unit_of_measure', or 'rate': {str(v)}",
-        ) from v
     except Exception as e:
         raise HTTPException(
             status_code=500, 
@@ -146,7 +162,7 @@ def show_similarity_of_random_input() -> dict:
         ) from f
     except Exception as e:
         raise HTTPException(
-            status_code=500,
+            status_code=400,
             detail=f"Failed to show similarity for random input: {str(e)}",
         ) from e
 
